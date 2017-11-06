@@ -28,8 +28,14 @@ RUN dpkg -i puppetlabs-release-pc1-trusty.deb
 RUN groupadd -g 999 puppet
 RUN useradd -ms /bin/bash -g puppet -u 999 puppet
 
-RUN apt-get update \
-  && apt-get install -y puppet-agent 
+# ensure that upstart is booting correctly in the container
+RUN rm /usr/sbin/policy-rc.d && rm /sbin/initctl && dpkg-divert --rename --remove /sbin/initctl && apt-get update && apt-get install -y net-tools wget puppet-agent && locale-gen en_US.UTF-8
+
+# use this to pull our control repo for dependencies
+RUN /opt/puppetlabs/puppet/bin/gem install r10k
+
+RUN ln -s /opt/puppetlabs/bin/facter /usr/bin/facter
+RUN ln -s /opt/puppetlabs/bin/puppet /usr/bin/puppet
 
 #COPY docker-entrypoint.sh /
 #RUN chmod +x /docker-entrypoint.sh
