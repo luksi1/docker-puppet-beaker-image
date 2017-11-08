@@ -33,7 +33,7 @@ RUN rm /usr/sbin/policy-rc.d && rm /sbin/initctl && dpkg-divert --rename --remov
 RUN apt-get update && apt-get install -y net-tools wget puppet-agent && locale-gen en_US.UTF-8
 
 # use this to pull our control repo for dependencies
-RUN /opt/puppetlabs/puppet/bin/gem install r10k
+RUN /opt/puppetlabs/puppet/bin/gem install r10k hiera-eyaml
 
 RUN ln -s /opt/puppetlabs/bin/facter /usr/bin/facter
 RUN ln -s /opt/puppetlabs/bin/puppet /usr/bin/puppet
