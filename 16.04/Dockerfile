@@ -8,7 +8,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
 
 # Install gosuENV GOSU_VERSION 1.9
 RUN set -x \
-    && apt-get update && apt-get install -y --no-install-recommends ca-certificates wget tzdata locales nscd git ssh \
+    && apt-get update && apt-get install -y --no-install-recommends ca-certificates wget tzdata locales nscd git ssh curl gcc libcurl4-openssl-dev make build-essential \
     && dpkgArch="$(dpkg --print-architecture | awk -F- '{ print $NF }')" \
     && wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch" \
     && wget -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch.asc" \
@@ -29,11 +29,12 @@ RUN groupadd -g 999 puppet
 RUN useradd -ms /bin/bash -g puppet -u 999 puppet
 
 # ensure that upstart is booting correctly in the container
-RUN rm /usr/sbin/policy-rc.d && rm /sbin/initctl && dpkg-divert --rename --remove /sbin/initctl 
+#RUN rm /usr/sbin/policy-rc.d && rm /sbin/initctl && dpkg-divert --rename --remove /sbin/initctl 
 RUN apt-get update && apt-get install -y net-tools wget puppet-agent && locale-gen en_US.UTF-8
 
 # use this to pull our control repo for dependencies
-RUN /opt/puppetlabs/puppet/bin/gem install r10k hiera-eyaml
+RUN /opt/puppetlabs/puppet/bin/gem install r10k hiera-eyaml curb
+
 
 RUN ln -s /opt/puppetlabs/bin/facter /usr/bin/facter
 RUN ln -s /opt/puppetlabs/bin/puppet /usr/bin/puppet
