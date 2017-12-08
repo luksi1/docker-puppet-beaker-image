@@ -32,14 +32,12 @@ RUN useradd -ms /bin/bash -g puppet -u 999 puppet
 #RUN rm /usr/sbin/policy-rc.d && rm /sbin/initctl && dpkg-divert --rename --remove /sbin/initctl 
 RUN apt-get update && apt-get install -y net-tools wget puppet-agent && locale-gen en_US.UTF-8
 
-# use this to pull our control repo for dependencies
+# r10k: use this to pull our control repo in-case we're testing a profile
+# hiera-eyaml: use this to test hiera eyaml files. this is needed to test certain profiles that use this feature
+# curb: a nice way to run acceptance tests against external resources, when testing infrastructure changes
 RUN /opt/puppetlabs/puppet/bin/gem install r10k hiera-eyaml curb
 
-
+# I've had a few problems with symlinks to facter and puppet not getting created correctly.
 RUN ln -s /opt/puppetlabs/bin/facter /usr/bin/facter
 RUN ln -s /opt/puppetlabs/bin/puppet /usr/bin/puppet
 
-#COPY docker-entrypoint.sh /
-#RUN chmod +x /docker-entrypoint.sh
-
-#CMD /docker-entrypoint.sh
